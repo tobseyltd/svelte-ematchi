@@ -1,7 +1,10 @@
 <script lang="ts">
+	import { send } from './transitions';
+
 	export let emoji: string;
 	export let selected: boolean;
 	export let found: boolean;
+	export let group: 'a' | 'b'
 </script>
 
 <div class="square" class:flipped={selected || found}>
@@ -9,7 +12,7 @@
 	<div class="background" />
 
 	{#if !found}
-		<span>{emoji}</span>
+		<span out:send={{ key: `${emoji}:${group}` }}>{emoji}</span>
 	{/if}
 </div>
 
@@ -34,7 +37,7 @@
 		height: 100%;
 		width: 100%;
 		backface-visibility: hidden;
-		background: #eee;
+		background: #ccc;
 		border: 0;
 		border-radius: 1em;
 		font-size: inherit;
