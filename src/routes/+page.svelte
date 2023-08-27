@@ -1,13 +1,29 @@
 <script lang="ts">
+	import { confetti } from '@neoconfetti/svelte';
 	import '../styles.css';
 	import Game from './Game.svelte';
 	import Modal from './Modal.svelte';
 	import { levels } from './levels';
 
 	let state: 'waiting' | 'playing' | 'paused' | 'won' | 'lost' = 'waiting';
+	let game: Game;
 </script>
 
-<Game />
+<Game
+	bind:this={game}
+	on:play={() => {
+		state = 'playing';
+	}}
+	on:pause={() => {
+		state = 'paused';
+	}}
+	on:lose={() => {
+		state = 'lost';
+	}}
+	on:win={() => {
+		state = 'won';
+	}}
+/>
 
 {#if state !== 'playing'}
 	<Modal>
@@ -30,11 +46,19 @@
 				<button>quit</button>
 			{:else}
 				{#each levels as level}
-					<button>{level.label}</button>
+					<button
+						on:click={() => {
+							game.start(level);
+						}}>{level.label}</button
+					>
 				{/each}
 			{/if}
 		</div>
 	</Modal>
+
+	{#if state === 'won'}
+		<div class="confetti" use:confetti={{ stageHeight: innerHeight, stageWidth: innerWidth }} />
+	{/if}
 {/if}
 
 <style>
@@ -48,5 +72,14 @@
 
 	p {
 		font-family: Grandstander;
+	}
+
+	.confetti {
+		position: fixed;
+		width: 100%;
+		height: 100%;
+		left: 50%;
+		top: 30%;
+		pointer-events: none;
 	}
 </style>
